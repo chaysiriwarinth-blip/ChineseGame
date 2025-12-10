@@ -36,7 +36,8 @@
         
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            /* เหลือ 1 คอลัมน์ เพราะมีแค่เกมเดียว */
+            grid-template-columns: repeat(1, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -139,7 +140,6 @@
             background-repeat: no-repeat;
             background-position: center;
             transform: translateX(-50%);
-            /*transition: left 0.1s ease-out;*/
             transition: none;
             z-index: 10;
         }
@@ -282,28 +282,11 @@
             </div>
             
             <div class="game-grid">
+                <!-- เหลือเฉพาะ เกมตกปลา -->
                 <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('fishing')">
                     <div class="game-icon">🎣</div>
                     <h2>เกมตกปลา</h2>
                     <p>จับปลาที่มีคำศัพท์ภาษาจีนมาเพื่อเก็บคะแนน</p>
-                </div>
-                
-                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('racing')">
-                    <div class="game-icon">🏎️</div>
-                    <h2>เกมแข่งรถ</h2>
-                    <p>ตอบคำถามให้ถูกเพื่อให้รถเคลื่อนที่ไปข้างหน้า</p>
-                </div>
-                
-                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('treasure')">
-                    <div class="game-icon">💎</div>
-                    <h2>เกมล่าสมบัติ</h2>
-                    <p>เก็บสมบัติโดยจับคู่คำศัพท์จีนกับคำแปลที่ถูกต้อง</p>
-                </div>
-                
-                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('memory')">
-                    <div class="game-icon">🧠</div>
-                    <h2>เกมความจำ</h2>
-                    <p>ทดสอบความจำด้วยการจับคู่คำศัพท์จีนกับความหมาย</p>
                 </div>
             </div>
         </div>
@@ -383,6 +366,7 @@
                 document.getElementById('game-level-badge').textContent = selectedLevel.toUpperCase();
                 startFishingGame();
             } else {
+                // หากต้องการความสะอาดสามารถเอาบล็อก else นี้ออกได้
                 alert(`เกม ${gameType} กำลังอยู่ในระหว่างพัฒนา!`);
                 backToMenu();
             }
