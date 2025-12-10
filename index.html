@@ -1,367 +1,441 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมตกปลาคำศัพท์จีน HSK2–HSK3</title>
+<meta charset="UTF-8">
+<title>เกมตกปลา HSK</title>
+<style>
+    body {
+        margin: 0;
+        background: #a3d5ff;
+        font-family: "Prompt", sans-serif;
+        user-select: none;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #87CEEB;
-            font-family: Arial, sans-serif;
-        }
+    /* เมนู */
+    #main-menu {
+        text-align: center;
+        padding-top: 40px;
+    }
 
-        h1 {
-            text-align: center;
-            padding: 20px;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px #333;
-        }
+    .level-btn {
+        font-size: 20px;
+        margin: 10px;
+        padding: 10px 30px;
+        background: #0284c7;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
 
-        .menu {
-            text-align: center;
-            margin-bottom: 15px;
-        }
+    /* ฉากหลังเกม */
+    #fishing-game {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background: url("https://cdn.pixabay.com/photo/2017/03/27/14/56/sea-2179183_1280.jpg");
+        background-size: cover;
+    }
 
-        .menu button {
-            padding: 10px 20px;
-            margin: 3px;
-            border: none;
-            border-radius: 8px;
-            background: #fff;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
-        }
+    #fishing-area {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
 
-        .menu button:hover {
-            background: #ffe680;
-        }
+    /* ปลา */
+    .fish {
+        position: absolute;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .fish:hover {
+        transform: scale(1.2);
+    }
 
-        #gameCanvas {
-            display: block;
-            margin: auto;
-            background: #4AB0FF;
-            border: 3px solid #fff;
-            box-shadow: 0 0 10px #0005;
-        }
+    /* แถบคะแนน */
+    #hud {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 22px;
+        color: white;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
 
-        #vocabDisplay {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: #000;
-        }
-    </style>
+    #options-container {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        width: 80%;
+    }
+
+    .option-btn {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        background: #fff;
+        border: 2px solid #333;
+        border-radius: 10px;
+        width: 80%;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .option-btn:hover {
+        background: #cce5ff;
+    }
+
+    #back-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: red;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+</style>
 </head>
 
 <body>
 
-<h1>เกมตกปลาคำศัพท์จีน HSK2 – HSK3</h1>
+<!-- เมนูหลัก -->
+<div id="main-menu">
+    <h1>เกมตกปลา HSK 2–3</h1>
+    <p>เลือกระดับคำศัพท์</p>
 
-<div class="menu">
-    <button class="filter-btn" data-level="all">ทั้งหมด</button>
-    <button class="filter-btn" data-level="hsk2">HSK2</button>
-    <button class="filter-btn" data-level="hsk3">HSK3</button>
+    <button class="level-btn" onclick="startGame('hsk2')">HSK 2</button>
+    <button class="level-btn" onclick="startGame('hsk3')">HSK 3</button>
 </div>
 
-<canvas id="gameCanvas" width="600" height="400"></canvas>
-<div id="vocabDisplay">คำศัพท์จะปรากฏที่นี่เมื่อคุณตกได้</div>
+<!-- เกมตกปลา -->
+<div id="fishing-game">
+    <div id="hud">
+        คะแนน: <span id="score">0</span><br>
+        เวลา: <span id="timer">60</span> วินาที
+    </div>
+
+    <button id="back-btn" onclick="backToMenu()">กลับเมนู</button>
+
+    <div id="fishing-area"></div>
+
+    <div id="options-container"></div>
+</div>
+
+<!-- เสียง -->
+<audio id="sound-correct" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4b89f33e67.mp3"></audio>
+<audio id="sound-wrong" src="https://cdn.pixabay.com/audio/2022/03/15/audio_0f7b17a5c1.mp3"></audio>
+<audio id="sound-catch" src="https://cdn.pixabay.com/audio/2021/08/04/audio_6f3b43c9b2.mp3"></audio>
 
 <script>
-// ------------------------------------------------------
-// 🔥 คำศัพท์ HSK2 พร้อมคำแปลไทย
-// ------------------------------------------------------
-const vocabHSK2 = [
-    { chinese: "运动", meaning: "ออกกำลังกาย" },
-    { chinese: "丈夫", meaning: "สามี" },
-    { chinese: "便宜", meaning: "ถูก" },
-    { chinese: "房间", meaning: "ห้อง" },
-    { chinese: "机场", meaning: "สนามบิน" },
-    { chinese: "去年", meaning: "ปีที่แล้ว" },
-    { chinese: "生病", meaning: "ป่วย" },
-    { chinese: "孩子", meaning: "เด็ก" },
-    { chinese: "正在", meaning: "กำลัง..." },
-    { chinese: "可能", meaning: "อาจจะ" },
-    { chinese: "意思", meaning: "ความหมาย" },
-    { chinese: "哥哥", meaning: "พี่ชาย" },
-    { chinese: "妹妹", meaning: "น้องสาว" },
-    { chinese: "弟弟", meaning: "น้องชาย" },
-    { chinese: "姐姐", meaning: "พี่สาว" },
-    { chinese: "快乐", meaning: "มีความสุข" },
-    { chinese: "准备", meaning: "เตรียมตัว" },
-    { chinese: "颜色", meaning: "สี" },
-    { chinese: "票", meaning: "ตั๋ว" },
-    { chinese: "生日", meaning: "วันเกิด" },
-    { chinese: "时间", meaning: "เวลา" },
-    { chinese: "旅游", meaning: "ท่องเที่ยว" },
-    { chinese: "事情", meaning: "เรื่องราว" },
-    { chinese: "外面", meaning: "ข้างนอก" },
-    { chinese: "踢足球", meaning: "เตะฟุตบอล" },
-    { chinese: "告诉", meaning: "บอก" },
-    { chinese: "送", meaning: "มอบให้" },
-    { chinese: "长", meaning: "ยาว" },
-    { chinese: "懂", meaning: "เข้าใจ" },
-    { chinese: "忙", meaning: "ยุ่ง" },
-    { chinese: "穿", meaning: "ใส่เสื้อผ้า" },
-    { chinese: "洗", meaning: "ล้าง" },
-    { chinese: "累", meaning: "เหนื่อย" },
-    { chinese: "晴", meaning: "ท้องฟ้าแจ่มใส" },
-    { chinese: "阴", meaning: "มีเมฆ" },
-    { chinese: "近", meaning: "ใกล้" },
-    { chinese: "远", meaning: "ไกล" },
-    { chinese: "慢", meaning: "ช้า" },
-    { chinese: "快", meaning: "เร็ว" },
-    { chinese: "红", meaning: "แดง" },
-    { chinese: "黑", meaning: "ดำ" },
-    { chinese: "白", meaning: "ขาว" },
-    { chinese: "贵", meaning: "แพง" },
-    { chinese: "雪", meaning: "หิมะ" },
-    { chinese: "牛奶", meaning: "นม" },
-    { chinese: "鸡蛋", meaning: "ไข่" },
-    { chinese: "西瓜", meaning: "แตงโม" },
-    { chinese: "药", meaning: "ยา" },
-    { chinese: "牛肉", meaning: "เนื้อวัว" },
-    { chinese: "羊肉", meaning: "เนื้อแกะ" },
-    { chinese: "鱼", meaning: "ปลา" },
-    { chinese: "咖啡", meaning: "กาแฟ" },
-    { chinese: "公司", meaning: "บริษัท" },
-    { chinese: "教室", meaning: "ห้องเรียน" },
-    { chinese: "房子", meaning: "บ้าน" },
-    { chinese: "路", meaning: "ถนน" },
-    { chinese: "问", meaning: "ถาม" },
-    { chinese: "完", meaning: "เสร็จ" },
-    { chinese: "再", meaning: "อีกครั้ง" },
-    { chinese: "一下", meaning: "สักครู่" },
-    { chinese: "每", meaning: "ทุกๆ" },
-    { chinese: "大家", meaning: "ทุกคน" },
-    { chinese: "希望", meaning: "หวังว่า" },
-    { chinese: "第一", meaning: "อันดับหนึ่ง" },
-    { chinese: "找", meaning: "หา" },
-    { chinese: "进", meaning: "เข้า" },
-    { chinese: "出", meaning: "ออก" },
-    { chinese: "玩", meaning: "เล่น" },
-    { chinese: "帮助", meaning: "ช่วย" }
+
+let score = 0;
+let timeLeft = 60;
+let timerInterval;
+let fishInterval;
+let currentAnswer = "";
+let currentLevel = "";
+
+/* คลังคำศัพท์ */
+const vocab = {
+
+    hsk2: [
+        {cn: "运动", th: "ออกกำลังกาย"},
+        {cn: "丈夫", th: "สามี"},
+        {cn: "便宜", th: "ถูก"},
+        {cn: "房间", th: "ห้อง"},
+        {cn: "机场", th: "สนามบิน"},
+        {cn: "去年", th: "ปีที่แล้ว"},
+        {cn: "生病", th: "ป่วย"},
+        {cn: "孩子", th: "เด็ก"},
+        {cn: "正在", th: "กำลัง..."},
+        {cn: "可能", th: "อาจจะ"},
+        {cn: "意思", th: "ความหมาย"},
+        {cn: "哥哥", th: "พี่ชาย"},
+        {cn: "妹妹", th: "น้องสาว"},
+        {cn: "弟弟", th: "น้องชาย"},
+        {cn: "姐姐", th: "พี่สาว"},
+        {cn: "快乐", th: "มีความสุข"},
+        {cn: "准备", th: "เตรียมตัว"},
+        {cn: "颜色", th: "สี"},
+        {cn: "票", th: "ตั๋ว"},
+        {cn: "生日", th: "วันเกิด"},
+        {cn: "时间", th: "เวลา"},
+        {cn: "旅游", th: "ท่องเที่ยว"},
+        {cn: "事情", th: "เรื่องราว"},
+        {cn: "外面", th: "ข้างนอก"},
+        {cn: "踢足球", th: "เตะฟุตบอล"},
+        {cn: "告诉", th: "บอก"},
+        {cn: "送", th: "มอบให้"},
+        {cn: "长", th: "ยาว"},
+        {cn: "懂", th: "เข้าใจ"},
+        {cn: "忙", th: "ยุ่ง"},
+        {cn: "穿", th: "ใส่เสื้อผ้า"},
+        {cn: "洗", th: "ล้าง"},
+        {cn: "累", th: "เหนื่อย"},
+        {cn: "晴", th: "ท้องฟ้าแจ่มใส"},
+        {cn: "阴", th: "มีเมฆ"},
+        {cn: "近", th: "ใกล้"},
+        {cn: "远", th: "ไกล"},
+        {cn: "慢", th: "ช้า"},
+        {cn: "快", th: "เร็ว"},
+        {cn: "红", th: "แดง"},
+        {cn: "黑", th: "ดำ"},
+        {cn: "白", th: "ขาว"},
+        {cn: "贵", th: "แพง"},
+        {cn: "雪", th: "หิมะ"},
+        {cn: "牛奶", th: "นม"},
+        {cn: "鸡蛋", th: "ไข่"},
+        {cn: "西瓜", th: "แตงโม"},
+        {cn: "药", th: "ยา"},
+        {cn: "牛肉", th: "เนื้อวัว"},
+        {cn: "羊肉", th: "เนื้อแกะ"},
+        {cn: "鱼", th: "ปลา"},
+        {cn: "咖啡", th: "กาแฟ"},
+        {cn: "公司", th: "บริษัท"},
+        {cn: "教室", th: "ห้องเรียน"},
+        {cn: "房子", th: "บ้าน"},
+        {cn: "路", th: "ถนน"},
+        {cn: "问", th: "ถาม"},
+        {cn: "完", th: "เสร็จ"},
+        {cn: "再", th: "อีกครั้ง"},
+        {cn: "一下", th: "สักครู่"},
+        {cn: "每", th: "ทุกๆ"},
+        {cn: "大家", th: "ทุกคน"},
+        {cn: "希望", th: "หวังว่า"},
+        {cn: "第一", th: "อันดับหนึ่ง"},
+        {cn: "找", th: "หา"},
+        {cn: "进", th: "เข้า"},
+        {cn: "出", th: "ออก"},
+        {cn: "玩", th: "เล่น"},
+        {cn: "帮助", th: "ช่วย"}
+    ],
+
+    hsk3: [
+        {cn:"阿姨", th:"คุณป้า"},
+        {cn:"啊", th:"คำลงท้าย"},
+        {cn:"班", th:"ชั้นเรียน"},
+        {cn:"办法", th:"วิธีการ"},
+        {cn:"帮助", th:"ช่วยเหลือ"},
+        {cn:"包", th:"กระเป๋า"},
+        {cn:"饱", th:"อิ่ม"},
+        {cn:"北方", th:"ภาคเหนือ"},
+        {cn:"鼻子", th:"จมูก"},
+        {cn:"比较", th:"ค่อนข้าง"},
+        {cn:"必须", th:"ต้อง"},
+        {cn:"变化", th:"การเปลี่ยนแปลง"},
+        {cn:"别人", th:"คนอื่น"},
+        {cn:"冰箱", th:"ตู้เย็น"},
+        {cn:"菜单", th:"เมนูอาหาร"},
+        {cn:"参加", th:"เข้าร่วม"},
+        {cn:"草", th:"หญ้า"},
+        {cn:"层", th:"ชั้นของอาคาร"},
+        {cn:"差", th:"แย่/ขาด"},
+        {cn:"成绩", th:"ผลการเรียน"},
+        {cn:"城市", th:"เมือง"},
+        {cn:"除了", th:"นอกจาก"},
+        {cn:"春", th:"ฤดูใบไม้ผลิ"},
+        {cn:"词语", th:"คำศัพท์"},
+        {cn:"出发", th:"ออกเดินทาง"},
+        {cn:"打扫", th:"ทำความสะอาด"},
+        {cn:"打算", th:"วางแผน"},
+        {cn:"带", th:"พา/นำ"},
+        {cn:"担心", th:"กังวล"},
+        {cn:"地", th:"อย่าง..."},
+        {cn:"灯", th:"โคมไฟ"},
+        {cn:"地方", th:"สถานที่"},
+        {cn:"地铁", th:"รถไฟใต้ดิน"},
+        {cn:"地图", th:"แผนที่"},
+        {cn:"电梯", th:"ลิฟต์"},
+        {cn:"电子邮件", th:"อีเมล"},
+        {cn:"东", th:"ทิศตะวันออก"},
+        {cn:"冬", th:"ฤดูหนาว"},
+        {cn:"动物", th:"สัตว์"},
+        {cn:"段", th:"ช่วง"},
+        {cn:"锻炼", th:"ออกกำลังกาย"},
+        {cn:"多么", th:"มากแค่ไหน"},
+        {cn:"饿", th:"หิว"},
+        {cn:"耳朵", th:"หู"},
+        {cn:"发", th:"ส่ง"},
+        {cn:"发现", th:"ค้นพบ"},
+        {cn:"放", th:"วาง"},
+        {cn:"放心", th:"วางใจ"},
+        {cn:"分", th:"คะแนน/นาที"},
+        {cn:"附近", th:"บริเวณใกล้เคียง"},
+        {cn:"复习", th:"ทบทวน"},
+        {cn:"干净", th:"สะอาด"},
+        {cn:"感冒", th:"เป็นหวัด"},
+        {cn:"敢", th:"กล้า"},
+        {cn:"跟", th:"กับ"},
+        {cn:"根据", th:"ตาม..."},
+        {cn:"更", th:"ยิ่งกว่า"},
+        {cn:"故事", th:"เรื่องเล่า"},
+        {cn:"刮风", th:"ลมพัด"},
+        {cn:"关系", th:"ความสัมพันธ์"},
+        {cn:"关心", th:"เอาใจใส่"},
+        {cn:"关于", th:"เกี่ยวกับ"},
+        {cn:"国家", th:"ประเทศ"},
+        {cn:"果汁", th:"น้ำผลไม้"},
+        {cn:"过去", th:"อดีต"},
+        {cn:"还是", th:"หรือว่า"},
+        {cn:"害怕", th:"กลัว"},
+        {cn:"河", th:"แม่น้ำ"},
+        {cn:"黑板", th:"กระดานดำ"},
+        {cn:"护照", th:"พาสปอร์ต"},
+        {cn:"花", th:"ดอกไม้"},
+        {cn:"花园", th:"สวน"},
+        {cn:"画", th:"วาดรูป"},
+        {cn:"坏", th:"เสีย"},
+        {cn:"欢迎", th:"ยินดีต้อนรับ"},
+        {cn:"环境", th:"สิ่งแวดล้อม"},
+        {cn:"或者", th:"หรือ (ประโยคบอกเล่า)"},
+        {cn:"会议", th:"การประชุม"},
+        {cn:"火", th:"ไฟ"},
+        {cn:"机会", th:"โอกาส"},
+        {cn:"几乎", th:"เกือบจะ"},
+        {cn:"记得", th:"จำได้"},
+        {cn:"检查", th:"ตรวจสอบ"},
+        {cn:"简单", th:"ง่าย"},
+        {cn:"健康", th:"สุขภาพ"},
+        {cn:"讲", th:"พูด/บอก"},
+        {cn:"脚", th:"เท้า"}
+    ]
+};
+
+/* ปลาหลายแบบ */
+const fishImages = [
+    "https://pngimg.com/uploads/fish/fish_PNG25167.png",
+    "https://pngimg.com/uploads/fish/fish_PNG25158.png",
+    "https://pngimg.com/uploads/fish/fish_PNG25153.png"
 ];
 
-// ------------------------------------------------------
-// 🔥 คำศัพท์ HSK3 พร้อมคำแปลไทย
-// ------------------------------------------------------
-const vocabHSK3 = [
-    { chinese: "阿姨", meaning: "คุณป้า" },
-    { chinese: "啊", meaning: "คำลงท้าย" },
-    { chinese: "班", meaning: "ชั้นเรียน" },
-    { chinese: "办法", meaning: "วิธีการ" },
-    { chinese: "帮助", meaning: "ช่วยเหลือ" },
-    { chinese: "包", meaning: "กระเป๋า" },
-    { chinese: "饱", meaning: "อิ่ม" },
-    { chinese: "北方", meaning: "ภาคเหนือ" },
-    { chinese: "鼻子", meaning: "จมูก" },
-    { chinese: "比较", meaning: "ค่อนข้าง" },
-    { chinese: "必须", meaning: "ต้อง" },
-    { chinese: "变化", meaning: "การเปลี่ยนแปลง" },
-    { chinese: "别人", meaning: "คนอื่น" },
-    { chinese: "冰箱", meaning: "ตู้เย็น" },
-    { chinese: "菜单", meaning: "เมนูอาหาร" },
-    { chinese: "参加", meaning: "เข้าร่วม" },
-    { chinese: "草", meaning: "หญ้า" },
-    { chinese: "层", meaning: "ชั้นของอาคาร" },
-    { chinese: "差", meaning: "แย่ / ขาด" },
-    { chinese: "成绩", meaning: "ผลการเรียน" },
-    { chinese: "城市", meaning: "เมือง" },
-    { chinese: "除了", meaning: "นอกจาก" },
-    { chinese: "春", meaning: "ฤดูใบไม้ผลิ" },
-    { chinese: "词语", meaning: "คำศัพท์" },
-    { chinese: "出发", meaning: "ออกเดินทาง" },
-    { chinese: "打扫", meaning: "ทำความสะอาด" },
-    { chinese: "打算", meaning: "วางแผน" },
-    { chinese: "带", meaning: "พา / นำ" },
-    { chinese: "担心", meaning: "กังวล" },
-    { chinese: "地", meaning: "อย่าง..." },
-    { chinese: "灯", meaning: "โคมไฟ" },
-    { chinese: "地方", meaning: "สถานที่" },
-    { chinese: "地铁", meaning: "รถไฟใต้ดิน" },
-    { chinese: "地图", meaning: "แผนที่" },
-    { chinese: "电梯", meaning: "ลิฟต์" },
-    { chinese: "电子邮件", meaning: "อีเมล" },
-    { chinese: "东", meaning: "ทิศตะวันออก" },
-    { chinese: "冬", meaning: "ฤดูหนาว" },
-    { chinese: "动物", meaning: "สัตว์" },
-    { chinese: "段", meaning: "ช่วง" },
-    { chinese: "锻炼", meaning: "ออกกำลังกาย" },
-    { chinese: "多么", meaning: "มากแค่ไหน" },
-    { chinese: "饿", meaning: "หิว" },
-    { chinese: "耳朵", meaning: "หู" },
-    { chinese: "发", meaning: "ส่ง" },
-    { chinese: "发现", meaning: "ค้นพบ" },
-    { chinese: "放", meaning: "วาง" },
-    { chinese: "放心", meaning: "วางใจ" },
-    { chinese: "分", meaning: "คะแนน / นาที" },
-    { chinese: "附近", meaning: "บริเวณใกล้เคียง" },
-    { chinese: "复习", meaning: "ทบทวน" },
-    { chinese: "干净", meaning: "สะอาด" },
-    { chinese: "感冒", meaning: "เป็นหวัด" },
-    { chinese: "敢", meaning: "กล้า" },
-    { chinese: "跟", meaning: "กับ" },
-    { chinese: "根据", meaning: "ตาม..." },
-    { chinese: "更", meaning: "ยิ่งกว่า" },
-    { chinese: "故事", meaning: "เรื่องเล่า" },
-    { chinese: "刮风", meaning: "ลมพัด" },
-    { chinese: "关系", meaning: "ความสัมพันธ์" },
-    { chinese: "关心", meaning: "เอาใจใส่" },
-    { chinese: "关于", meaning: "เกี่ยวกับ" },
-    { chinese: "国家", meaning: "ประเทศ" },
-    { chinese: "果汁", meaning: "น้ำผลไม้" },
-    { chinese: "过去", meaning: "อดีต" },
-    { chinese: "还是", meaning: "หรือว่า" },
-    { chinese: "害怕", meaning: "กลัว" },
-    { chinese: "河", meaning: "แม่น้ำ" },
-    { chinese: "黑板", meaning: "กระดานดำ" },
-    { chinese: "护照", meaning: "พาสปอร์ต" },
-    { chinese: "花", meaning: "ดอกไม้" },
-    { chinese: "花园", meaning: "สวน" },
-    { chinese: "画", meaning: "วาดรูป" },
-    { chinese: "坏", meaning: "เสีย" },
-    { chinese: "欢迎", meaning: "ยินดีต้อนรับ" },
-    { chinese: "环境", meaning: "สิ่งแวดล้อม" },
-    { chinese: "或者", meaning: "หรือ (ประโยคบอกเล่า)" },
-    { chinese: "会议", meaning: "การประชุม" },
-    { chinese: "火", meaning: "ไฟ" },
-    { chinese: "机会", meaning: "โอกาส" },
-    { chinese: "几乎", meaning: "เกือบจะ" },
-    { chinese: "记得", meaning: "จำได้" },
-    { chinese: "检查", meaning: "ตรวจสอบ" },
-    { chinese: "简单", meaning: "ง่าย" },
-    { chinese: "健康", meaning: "สุขภาพ" },
-    { chinese: "讲", meaning: "พูด/บอก" },
-    { chinese: "脚", meaning: "เท้า" }
-];
+/* เริ่มเกม */
+function startGame(level) {
+    currentLevel = level;
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("fishing-game").style.display = "block";
 
-// ------------------------------------------------------
-// ระบบจัดการคำศัพท์ตามระดับ
-// ------------------------------------------------------
-let currentLevel = "all";
+    score = 0;
+    timeLeft = 60;
+    updateScore();
+    updateTimer();
 
-function getCurrentVocab() {
-    if (currentLevel === "hsk2") return vocabHSK2;
-    if (currentLevel === "hsk3") return vocabHSK3;
-    return [...vocabHSK2, ...vocabHSK3];
+    timerInterval = setInterval(countdown, 1000);
+    fishInterval = setInterval(spawnFish, 1500);
 }
 
-// ------------------------------------------------------
-// ส่วนของเกม
-// ------------------------------------------------------
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+/* ตัวจับเวลา */
+function countdown() {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) endGame();
+}
 
-let fishes = [];
-let hookX = 300;
-let hookY = 0;
+/* อัปเดต HUD */
+function updateScore() {
+    document.getElementById("score").innerText = score;
+}
+function updateTimer() {
+    document.getElementById("timer").innerText = timeLeft;
+}
 
-// สร้างปลา
-function createFish() {
-    const vocab = getCurrentVocab();
-    let random = vocab[Math.floor(Math.random() * vocab.length)];
+/* สุ่มปลา */
+function spawnFish() {
+    const fish = document.createElement("img");
+    fish.src = fishImages[Math.floor(Math.random()*fishImages.length)];
+    fish.className = "fish";
+    fish.style.width = "100px";
+    fish.style.top = Math.random() * 70 + "%";
+    fish.style.left = "-150px";
 
-    let fish = {
-        x: Math.random() * 580,
-        y: 400,
-        speed: 1 + Math.random() * 2,
-        chinese: random.chinese,
-        meaning: random.meaning
+    const area = document.getElementById("fishing-area");
+    area.appendChild(fish);
+
+    let x = -150;
+    const swim = setInterval(() => {
+        x += 3;
+        fish.style.left = x + "px";
+
+        if (x > window.innerWidth) {
+            clearInterval(swim);
+            fish.remove();
+        }
+    }, 20);
+
+    fish.onclick = () => {
+        document.getElementById("sound-catch").play();
+        fish.remove();
+        generateQuestion();
     };
-    fishes.push(fish);
 }
 
-// อัปเดตปลา
-function updateFish() {
-    fishes.forEach(fish => {
-        fish.y -= fish.speed;
+/* แสดงคำถามเป็นตัวเลือก 4 ข้อ */
+function generateQuestion() {
+    const list = vocab[currentLevel];
+    const word = list[Math.floor(Math.random()*list.length)];
+
+    currentAnswer = word.th;
+
+    let options = [word.th];
+
+    while (options.length < 4) {
+        let r = list[Math.floor(Math.random()*list.length)].th;
+        if (!options.includes(r)) options.push(r);
+    }
+
+    options.sort(() => Math.random() - 0.5);
+
+    let html = `<h2 style="color:white;text-shadow:2px 2px 3px #000">${word.cn}</h2>`;
+
+    options.forEach(op => {
+        html += `<button class="option-btn" onclick="checkAnswer('${op}')">${op}</button>`;
     });
 
-    fishes = fishes.filter(f => f.y > -20);
+    document.getElementById("options-container").innerHTML = html;
 }
 
-// วาดปลา
-function drawFish() {
-    ctx.fillStyle = "yellow";
-    fishes.forEach(fish => {
-        ctx.beginPath();
-        ctx.arc(fish.x, fish.y, 18, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "black";
-        ctx.fillText(fish.chinese, fish.x - 10, fish.y + 5);
-        ctx.fillStyle = "yellow";
-    });
+/* ตรวจคำตอบ */
+function checkAnswer(choice) {
+    if (choice === currentAnswer) {
+        score += 10;
+        document.getElementById("sound-correct").play();
+    } else {
+        document.getElementById("sound-wrong").play();
+    }
+    updateScore();
+    document.getElementById("options-container").innerHTML = "";
 }
 
-// วาดคันเบ็ด
-function drawHook() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(hookX, hookY, 4, 20);
+/* จบเกม */
+function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(fishInterval);
+
+    alert("จบเกม! คุณได้คะแนน: " + score);
+    backToMenu();
 }
 
-// ตรวจจับปลาที่ถูกจับได้
-function checkCatch() {
-    fishes.forEach((fish, index) => {
-        let dx = Math.abs(fish.x - hookX);
-        let dy = Math.abs(fish.y - hookY);
+/* กลับเมนู */
+function backToMenu() {
+    document.getElementById("fishing-game").style.display = "none";
+    document.getElementById("main-menu").style.display = "block";
 
-        if (dx < 18 && dy < 20) {
-            document.getElementById("vocabDisplay").innerHTML =
-                `คุณตกได้: <b>${fish.chinese}</b> – ${fish.meaning}`;
+    clearInterval(timerInterval);
+    clearInterval(fishInterval);
 
-            fishes.splice(index, 1);
-        }
-    });
+    document.getElementById("fishing-area").innerHTML = "";
+    document.getElementById("options-container").innerHTML = "";
 }
 
-// ลูปเกม
-function gameLoop() {
-    ctx.clearRect(0, 0, 600, 400);
-
-    drawHook();
-    drawFish();
-
-    updateFish();
-    checkCatch();
-
-    if (Math.random() < 0.02) createFish();
-
-    requestAnimationFrame(gameLoop);
-}
-
-gameLoop();
-
-// ควบคุมเมาส์
-document.addEventListener("mousemove", e => {
-    let rect = canvas.getBoundingClientRect();
-    hookX = e.clientX - rect.left;
-});
-
-// ------------------------------------------------------
-// ปุ่มเลือกระดับ
-// ------------------------------------------------------
-document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        currentLevel = btn.dataset.level;
-
-        if (currentLevel === "hsk2") {
-            document.getElementById("vocabDisplay").innerHTML =
-                "แสดงคำศัพท์ HSK2 ทั้งหมด";
-        } else if (currentLevel === "hsk3") {
-            document.getElementById("vocabDisplay").innerHTML =
-                "แสดงคำศัพท์ HSK3 ทั้งหมด";
-        } else {
-            document.getElementById("vocabDisplay").innerHTML =
-                "แสดงคำศัพท์ทั้งหมด HSK2 + HSK3";
-        }
-    });
-});
 </script>
 
 </body>
