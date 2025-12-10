@@ -618,3 +618,93 @@
     </script>
 </body>
 </html>
+import tkinter as tk
+import random
+from tkinter import messagebox
+
+# -----------------------------
+# ชุดคำศัพท์ HSK2 (ตัวอย่าง)
+# -----------------------------
+words = {
+    "弟弟": "น้องชาย",
+    "姐姐": "พี่สาว",
+    "苹果": "แอปเปิ้ล",
+    "手机": "โทรศัพท์มือถือ",
+    "机场": "สนามบิน",
+    "教室": "ห้องเรียน",
+    "学校": "โรงเรียน",
+    "生病": "ป่วย",
+    "跑步": "วิ่ง",
+    "踢足球": "เล่นฟุตบอล"
+}
+
+# -----------------------------
+# สร้างเกม GUI ด้วย Tkinter
+# -----------------------------
+class HSK2Game:
+    def __init__(self, master):
+        self.master = master
+        master.title("เกมตัวอักษรจีน HSK2 - เตรียมความพร้อม HSK3")
+        master.geometry("500x400")
+
+        self.score = 0
+
+        # คำถาม
+        self.question_label = tk.Label(master, text="", font=("Arial", 22))
+        self.question_label.pack(pady=20)
+
+        # ปุ่มตัวเลือก
+        self.buttons = []
+        for i in range(4):
+            btn = tk.Button(master, text="", font=("Arial", 16),
+                            width=20, height=2,
+                            command=lambda b=i: self.check_answer(b))
+            btn.pack(pady=5)
+            self.buttons.append(btn)
+
+        # คะแนน
+        self.score_label = tk.Label(master, text="คะแนน: 0", font=("Arial", 18))
+        self.score_label.pack(pady=20)
+
+        self.next_question()
+
+    # -----------------------------
+    # ฟังก์ชันสร้างคำถามใหม่
+    # -----------------------------
+    def next_question(self):
+        self.current_word = random.choice(list(words.keys()))
+        self.question_label.config(text=f"คำว่า: {self.current_word} หมายถึงอะไร?")
+
+        # สุ่มตัวเลือก
+        correct = words[self.current_word]
+        options = list(words.values())
+        options.remove(correct)
+        choices = random.sample(options, 3) + [correct]
+        random.shuffle(choices)
+
+        for i in range(4):
+            self.buttons[i].config(text=choices[i])
+
+    # -----------------------------
+    # ตรวจคำตอบ
+    # -----------------------------
+    def check_answer(self, index):
+        clicked = self.buttons[index].cget("text")
+        correct = words[self.current_word]
+
+        if clicked == correct:
+            self.score += 1
+            messagebox.showinfo("ถูกต้อง!", "เก่งมาก! 答对了！")
+        else:
+            messagebox.showwarning("ผิดค่ะ", f"ตอบผิดนะคะ\nคำที่ถูกคือ: {correct}")
+
+        self.score_label.config(text=f"คะแนน: {self.score}")
+        self.next_question()
+
+
+# -----------------------------
+# รันเกม
+# -----------------------------
+root = tk.Tk()
+game = HSK2Game(root)
+root.mainloop()
