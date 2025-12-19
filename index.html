@@ -276,7 +276,7 @@
         <div id="main-menu">
             <div class="level-selector">
                 <button class="level-btn active" data-level="all">ทั้งหมด</button>
-  
+                <button class="level-btn" data-level="hsk1">HSK1</button>
                 <button class="level-btn" data-level="hsk2">HSK2</button>
                 <button class="level-btn" data-level="hsk3">HSK3</button>
             </div>
@@ -286,6 +286,24 @@
                     <div class="game-icon">🎣</div>
                     <h2>เกมตกปลา</h2>
                     <p>จับปลาที่มีคำศัพท์ภาษาจีนมาเพื่อเก็บคะแนน</p>
+                </div>
+                
+                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('racing')">
+                    <div class="game-icon">🏎️</div>
+                    <h2>เกมแข่งรถ</h2>
+                    <p>ตอบคำถามให้ถูกเพื่อให้รถเคลื่อนที่ไปข้างหน้า</p>
+                </div>
+                
+                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('treasure')">
+                    <div class="game-icon">💎</div>
+                    <h2>เกมล่าสมบัติ</h2>
+                    <p>เก็บสมบัติโดยจับคู่คำศัพท์จีนกับคำแปลที่ถูกต้อง</p>
+                </div>
+                
+                <div class="game-card" data-level="hsk1 hsk2 hsk3" onclick="startGame('memory')">
+                    <div class="game-icon">🧠</div>
+                    <h2>เกมความจำ</h2>
+                    <p>ทดสอบความจำด้วยการจับคู่คำศัพท์จีนกับความหมาย</p>
                 </div>
             </div>
         </div>
@@ -320,403 +338,299 @@
     <script>
         // ข้อมูลคำศัพท์ภาษาจีนแบ่งตามระดับ HSK
         const vocabulary = {
-         
-  hsk2: [
-    { chinese: "爸爸", meaning: "พ่อ" },
-    { chinese: "妈妈", meaning: "แม่" },
-    { chinese: "孩子", meaning: "เด็ก" },
-    { chinese: "丈夫", meaning: "สามี" },
-    { chinese: "妻子", meaning: "ภรรยา" },
-    { chinese: "朋友", meaning: "เพื่อน" },
-    { chinese: "老师", meaning: "ครู" },
-    { chinese: "学生", meaning: "นักเรียน" },
-    { chinese: "家", meaning: "บ้าน/ครอบครัว" },
-    { chinese: "房间", meaning: "ห้อง" },
-    { chinese: "房子", meaning: "บ้าน" },
-    { chinese: "公司", meaning: "บริษัท" },
-    { chinese: "工作", meaning: "งาน" },
-    { chinese: "机场", meaning: "สนามบิน" },
-    { chinese: "火车站", meaning: "สถานีรถไฟ" },
-    { chinese: "去年", meaning: "ปีที่แล้ว" },
-    { chinese: "今年", meaning: "ปีนี้" },
-    { chinese: "明年", meaning: "ปีหน้า" },
-    { chinese: "生日", meaning: "วันเกิด" },
-    { chinese: "生病", meaning: "ป่วย" },
-    { chinese: "医生", meaning: "หมอ" },
-    { chinese: "药", meaning: "ยา" },
-    { chinese: "准备", meaning: "เตรียม" },
-    { chinese: "正在", meaning: "กำลัง" },
-    { chinese: "可能", meaning: "อาจจะ" },
-    { chinese: "希望", meaning: "หวังว่า" },
-    { chinese: "帮助", meaning: "ช่วยเหลือ" },
-    { chinese: "问", meaning: "ถาม" },
-    { chinese: "回答", meaning: "ตอบ" },
-    { chinese: "说话", meaning: "พูดคุย" },
-    { chinese: "告诉", meaning: "บอก" },
-    { chinese: "介绍", meaning: "แนะนำ" },
-    { chinese: "懂", meaning: "เข้าใจ" },
-    { chinese: "知道", meaning: "รู้" },
-    { chinese: "觉得", meaning: "รู้สึกว่า" },
-    { chinese: "决定", meaning: "ตัดสินใจ" },
-    { chinese: "穿", meaning: "สวมใส่" },
-    { chinese: "洗", meaning: "ล้าง" },
-    { chinese: "买", meaning: "ซื้อ" },
-    { chinese: "卖", meaning: "ขาย" },
-    { chinese: "送", meaning: "ส่งให้" },
-    { chinese: "给", meaning: "ให้" },
-    { chinese: "到", meaning: "ไปถึง" },
-    { chinese: "从", meaning: "จาก" },
-    { chinese: "起床", meaning: "ตื่นนอน" },
-    { chinese: "上班", meaning: "ไปทำงาน" },
-    { chinese: "下班", meaning: "เลิกงาน" },
-    { chinese: "开始", meaning: "เริ่มต้น" },
-    { chinese: "结束", meaning: "จบ" },
-    { chinese: "运动", meaning: "ออกกำลังกาย" },
-    { chinese: "跑步", meaning: "วิ่ง" },
-    { chinese: "游泳", meaning: "ว่ายน้ำ" },
-    { chinese: "踢足球", meaning: "เตะฟุตบอล" },
-    { chinese: "咖啡", meaning: "กาแฟ" },
-    { chinese: "茶", meaning: "ชา" },
-    { chinese: "牛奶", meaning: "นม" },
-    { chinese: "水", meaning: "น้ำ" },
-    { chinese: "鸡蛋", meaning: "ไข่" },
-    { chinese: "米饭", meaning: "ข้าว" },
-    { chinese: "面条", meaning: "ก๋วยเตี๋ยว" },
-    { chinese: "水果", meaning: "ผลไม้" },
-    { chinese: "苹果", meaning: "แอปเปิล" },
-    { chinese: "香蕉", meaning: "กล้วย" },
-    { chinese: "西瓜", meaning: "แตงโม" }
-  ],
-
-  /* -----------------  HSK3 = 90 คำ  ----------------- */
-  hsk3: [
-    { chinese: "图书馆", meaning: "ห้องสมุด" },
-    { chinese: "餐厅", meaning: "ร้านอาหาร" },
-    { Chinese:"公园", meaning: "สวนสาธารณะ" }, // note: lowercase property fixed below in logic if needed
-    { chinese: "超市", meaning: "ซูเปอร์มาร์เก็ต" },
-    { chinese: "银行", meaning: "ธนาคาร" },
-    { chinese: "办公室", meaning: "สำนักงาน" },
-    { chinese: "警察", meaning: "ตำรวจ" },
-    { chinese: "地图", meaning: "แผนที่" },
-    { chinese: "国家", meaning: "ประเทศ" },
-    { chinese: "文化", meaning: "วัฒนธรรม" },
-    { chinese: "环境", meaning: "สิ่งแวดล้อม" },
-    { chinese: "习惯", meaning: "นิสัย" },
-    { chinese: "要求", meaning: "ร้องขอ / ต้องการ" },
-    { chinese: "解决", meaning: "แก้ปัญหา" },
-    { chinese: "注意", meaning: "ระวัง" },
-    { chinese: "参加", meaning: "เข้าร่วม" },
-    { chinese: "决定", meaning: "ตัดสินใจ" },
-    { chinese: "担心", meaning: "กังวล" },
-    { chinese: "满意", meaning: "พอใจ" },
-    { chinese: "明白", meaning: "เข้าใจ" },
-    { chinese: "清楚", meaning: "ชัดเจน" },
-    { chinese: "相信", meaning: "เชื่อ" },
-    { chinese: "比较", meaning: "ค่อนข้าง" },
-    { chinese: "差不多", meaning: "ประมาณ" },
-    { chinese: "一定", meaning: "แน่นอน" },
-    { chinese: "终于", meaning: "ในที่สุด" },
-    { chinese: "首先", meaning: "ก่อนอื่น" },
-    { chinese: "然后", meaning: "หลังจากนั้น" },
-    { chinese: "以前", meaning: "ก่อนหน้า" },
-    { chinese: "后来", meaning: "ภายหลัง" },
-    { chinese: "一直", meaning: "ตลอด" },
-    { chinese: "突然", meaning: "ทันใดนั้น" },
-    { chinese: "最近", meaning: "เร็วๆ นี้" },
-    { chinese: "除了", meaning: "นอกจาก" },
-    { chinese: "为了", meaning: "เพื่อ" },
-    { chinese: "关于", meaning: "เกี่ยวกับ" },
-    { chinese: "根据", meaning: "ตามที่" },
-    { chinese: "如果", meaning: "ถ้า" },
-    { chinese: "或者", meaning: "หรือ" },
-    { chinese: "而且", meaning: "และยัง" },
-    { chinese: "虽然", meaning: "แม้ว่า" },
-    { chinese: "但是", meaning: "แต่" },
-    { chinese: "还是", meaning: "ยังคง" },
-    { chinese: "需要", meaning: "ต้องการ" },
-    { chinese: "帮助", meaning: "ช่วยเหลือ" },
-    { chinese: "努力", meaning: "พยายาม" },
-    { chinese: "提高", meaning: "พัฒนา" },
-    { chinese: "介绍", meaning: "แนะนำ" },
-    { chinese: "照顾", meaning: "ดูแล" },
-    { chinese: "记得", meaning: "จำได้" },
-    { chinese: "忘记", meaning: "ลืม" },
-    { chinese: "洗澡", meaning: "อาบน้ำ" },
-    { chinese: "发烧", meaning: "เป็นไข้" },
-    { chinese: "感冒", meaning: "เป็นหวัด" },
-    { chinese: "渴", meaning: "กระหายน้ำ" },
-    { chinese: "饿", meaning: "หิว" },
-    { chinese: "耳朵", meaning: "หู" },
-    { chinese: "眼睛", meaning: "ตา" },
-    { chinese: "头发", meaning: "ผม" },
-    { chinese: "手", meaning: "มือ" },
-    { chinese: "脚", meaning: "เท้า" },
-    { chinese: "鼻子", meaning: "จมูก" },
-    { chinese: "疼", meaning: "ปวด" },
-    { chinese: "高兴", meaning: "ยินดี/มีความสุข" },
-    { chinese: "担心", meaning: "เป็นห่วง" },
-    { chinese: "习俗", meaning: "ประเพณี" },
-    { chinese: "礼貌", meaning: "มารยาท" },
-    { chinese: "关系", meaning: "ความสัมพันธ์" },
-    { chinese: "感情", meaning: "ความรู้สึก" },
-    { chinese: "房租", meaning: "ค่าเช่า" },
-    { chinese: "家具", meaning: "เฟอร์นิเจอร์" },
-    { chinese: "司机", meaning: "คนขับรถ" },
-    { chinese: "服务员", meaning: "พนักงานบริการ" },
-    { chinese: "节日", meaning: "เทศกาล" },
-    { chinese: "历史", meaning: "ประวัติศาสตร์" },
-    { chinese: "艺术", meaning: "ศิลปะ" },
-    { chinese: "科技", meaning: "เทคโนโลยี" },
-    { chinese: "音乐", meaning: "ดนตรี" },
-    { chinese: "电影", meaning: "ภาพยนตร์" },
-    { chinese: "节目", meaning: "รายการ" },
-    { chinese: "比赛", meaning: "การแข่งขัน" },
-    { chinese: "机会", meaning: "โอกาส" },
-    { chinese: "成功", meaning: "ความสำเร็จ" },
-    { chinese: "失败", meaning: "ความล้มเหลว" },
-    { chinese: "经验", meaning: "ประสบการณ์" },
-    { chinese: "责任", meaning: "ความรับผิดชอบ" },
-    { chinese: "原则", meaning: "หลักการ" },
-    { chinese: "特点", meaning: "ลักษณะเฉพาะ" },
-    { chinese: "水平", meaning: "ระดับ/ความสามารถ" }
-  ]
-};
-
-/* ----------------- ตัวแปรเกม ----------------- */
-let selectedLevel = 'hsk2'; // default
-let score = 0;
-let timeLeft = 60;
-let timer = null;
-let correctCount = 0;
-let wrongCount = 0;
-let missedCount = 0;
-let spawnTimeout = null;
-
-/* ----------------- เมนูระดับ ----------------- */
-const levelBtns = document.querySelectorAll('.level-btn');
-levelBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    levelBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedLevel = btn.dataset.level;
-    document.getElementById('level-badge').textContent = btn.textContent;
-  });
-});
-
-/* ----------------- เริ่มเกม (แสดงหน้าจอ) ----------------- */
-function startGame() {
-  document.getElementById('fishing-game').style.display = "block";
-  // รีเซ็ตสถานะบางอย่าง (ไม่เริ่มจับเวลาให้โดยอัตโนมัติ — ให้ผู้เล่นกดปุ่ม เริ่มเกม)
-  document.getElementById('score').textContent = score;
-  document.getElementById('timer').textContent = timeLeft;
-}
-
-/* ----------------- เริ่มตัวจับเวลาและเริ่มสปอว์ปลา ----------------- */
-function startFishingTimer() {
-  // รีเซ็ตค่าทุกครั้งที่เริ่มใหม่
-  score = 0;
-  timeLeft = 60;
-  correctCount = 0;
-  wrongCount = 0;
-  missedCount = 0;
-  document.getElementById('score').textContent = score;
-  document.getElementById('timer').textContent = timeLeft;
-  document.getElementById('game-over-overlay').style.display = 'none';
-  document.getElementById('fishing-area').innerHTML = '';
-
-  // เริ่มตัวจับเวลา
-  if (timer) clearInterval(timer);
-  timer = setInterval(() => {
-    timeLeft--;
-    document.getElementById('timer').textContent = timeLeft;
-    if (timeLeft <= 0) {
-      endGame();
-    }
-  }, 1000);
-
-  // เริ่มสปอว์ปลา
-  spawnFish();
-}
-
-/* ----------------- ฟังก์ชัน spawnFish: สร้างปลา 1 ตัว ในพื้นที่ ----------------- */
-function spawnFish() {
-  const area = document.getElementById('fishing-area');
-
-  // เลือก pool ตามระดับที่ผู้เล่นเลือก
-  let pool = [];
-  if (selectedLevel === 'all') {
-    pool = [...vocabulary.hsk2, ...vocabulary.hsk3];
-  } else if (selectedLevel === 'hsk2') {
-    pool = vocabulary.hsk2;
-  } else {
-    pool = vocabulary.hsk3;
-  }
-  if (!pool || pool.length === 0) return;
-
-  // สุ่มคำศัพท์
-  const word = pool[Math.floor(Math.random() * pool.length)];
-
-  // สร้าง element ปลา (แท็กแสดงคำจีน)
-  const fish = document.createElement('div');
-  fish.className = 'fish pop';
-  fish.textContent = word.chinese;
-
-  // ตำแหน่งสุ่ม (top สูงสุดในพื้นที่)
-  const areaRect = area.getBoundingClientRect();
-  const maxTop = Math.max(10, areaRect.height - 50);
-  fish.style.top = (10 + Math.random() * (maxTop - 10)) + 'px';
-
-  // ตำแหน่งซ้ายเริ่มต้น (น้อยกว่า 0 เพื่อเข้าจากซ้าย)
-  const startLeft = -80 + Math.random() * 40; // -80 .. -40 (เริ่มจากนอกซ้าย)
-  fish.style.left = startLeft + 'px';
-
-  // เพิ่มการเคลื่อนไหวให้เคลื่อนขวาไปซ้าย/ขวาแบบสุ่ม
-  const duration = 4000 + Math.random() * 3000; // 4s - 7s
-  fish.style.transition = `transform ${duration}ms linear, left ${duration}ms linear`;
-
-  // กำหนดความเร็วและทิศขึ้นอยู่กับสุ่ม (ขยับ left ไปจนสุดขวา)
-  area.appendChild(fish);
-
-  // หลังเพิ่ม ต้อง force layout ก่อนเปลี่ยน left เพื่อให้ transition ทำงาน
-  requestAnimationFrame(() => {
-    // เคลื่อนปลาไปด้านขวาสุด (ออกนอกขอบขวา)
-    const targetLeft = areaRect.width + 60;
-    fish.style.left = targetLeft + 'px';
-  });
-
-  // เมื่อคลิกปลา -> ถามคำแปล
-  const clickHandler = (e) => {
-    e.stopPropagation();
-    // ป้องกันคลิกซ้ำ
-    if (!fish.parentNode) return;
-
-    // ขอคำตอบจากผู้เล่น (ภาษาไทย)
-    const ans = prompt(`คำศัพท์ "${word.chinese}" แปลว่าอะไร? (พิมพ์คำแปลเป็นภาษาไทย)`);
-
-    // ตรวจคำตอบ (เปรียบเทียบตรงตัว, ตัดช่องว่าง)
-    if (ans && ans.trim() === word.meaning) {
-      score += 10;
-      correctCount++;
-      // ให้ feedback เล็กน้อย
-      fish.textContent = '🎉';
-      fish.style.transform = 'scale(1.2)';
-      setTimeout(() => { if (fish.parentNode) fish.remove(); }, 450);
-    } else {
-      // ผิด
-      wrongCount++;
-      // แสดงคำแปลให้ผู้เล่นเห็นชั่วคราว
-      const correctText = word.meaning;
-      fish.textContent = `${word.chinese} → ${correctText}`;
-      fish.style.transform = 'scale(.9)';
-      setTimeout(() => { if (fish.parentNode) fish.remove(); }, 900);
-    }
-
-    // อัปเดตคะแนนบน UI
-    document.getElementById('score').textContent = score;
-  };
-
-  fish.addEventListener('click', clickHandler);
-
-  // ถ้าปลายังอยู่ในโดม (ไม่ได้ถูกคลิก) เมื่อเวลาผ่านไประยะหนึ่ง ให้เพิ่ม missedCount และลบปลา
-  const lifeTimeout = setTimeout(() => {
-    if (fish.parentNode) {
-      missedCount++;
-      fish.remove();
-    }
-  }, duration + 300); // หลัง movement เสร็จเล็กน้อย
-
-  // สร้าง spawn ใหม่ ถ้ายังมีเวลาเหลือ
-  spawnTimeout = setTimeout(() => {
-    if (timeLeft > 0) spawnFish();
-  }, 900 + Math.random() * 800);
-}
-
-/* ----------------- จบเกม ----------------- */
-function endGame() {
-  // ป้องกันการเรียกซ้ำ
-  if (timer) clearInterval(timer);
-  if (spawnTimeout) clearTimeout(spawnTimeout);
-
-  // แสดงผลสรุป
-  document.getElementById('final-score').textContent = score;
-  document.getElementById('correct-count').textContent = correctCount;
-  document.getElementById('wrong-count').textContent = wrongCount;
-  document.getElementById('missed-count').textContent = missedCount;
-
-  // แสดง overlay
-  const overlay = document.getElementById('game-over-overlay');
-  overlay.style.display = 'flex';
-}
-
-/* ----------------- เริ่มอีกครั้ง ----------------- */
-function restartGame() {
-  // ซ่อน overlay
-  document.getElementById('game-over-overlay').style.display = 'none';
-  // ล้างพื้นที่ปลา
-  const area = document.getElementById('fishing-area');
-  area.innerHTML = '';
-  // เริ่มจับเวลาอีกครั้ง
-  startFishingTimer();
-}
-
-/* ----------------- กลับเมนูหลัก ----------------- */
-function backToMenu() {
-  // ซ่อนหน้าจอเกม และ รีโหลดหน้าให้กลับสู่สถานะเริ่มต้น
-  location.reload();
-}
-
-/* ----------------- ปรับปรุง: ใส่ fishing rod และ tracking mouse เพื่อปรับเส้นเอ็น ----------------- */
-(function attachRod(){
-  const area = document.getElementById('fishing-area');
-  if(!area) return;
-  // สร้างคันเบ็ด
-  const rod = document.createElement('div');
-  rod.className = 'fishing-rod';
-  const line = document.createElement('div');
-  line.className = 'fishing-line';
-  area.appendChild(rod);
-  area.appendChild(line);
-
-  // อัพเดทตำแหน่งของคันเบ็ดและเส้นเอ็นตามเมาส์เมื่ออยู่ในพื้นที่
-  area.addEventListener('mousemove', (e) => {
-    const rect = area.getBoundingClientRect();
-    // mouse x relative to area
-    const mx = e.clientX - rect.left;
-    // limit rod left to area bounds
-    const rodWidth = rod.offsetWidth || 260;
-    let left = Math.max(rodWidth/2, Math.min(rect.width - rodWidth/2, mx));
-    // position rod centered at left
-    rod.style.left = left + 'px';
-    // set line position
-    line.style.left = left + 'px';
-    // length of line (from rod bottom down to mouse Y)
-    const my = e.clientY - rect.top;
-    const lineTop = 60; // rod bottom offset
-    const height = Math.max(0, Math.min(rect.height - lineTop, my - lineTop));
-    line.style.height = height + 'px';
-  });
-  // เมื่อ mouse ออกจากพื้นที่ ให้เส้นสั้นลง
-  area.addEventListener('mouseleave', () => {
-    line.style.height = '0';
-  });
-})();
-
-/* ----------------- Accessibility & small fixes ----------------- */
-/* Ensure hsk3 property names consistent (there was a typo earlier if any) */
-if(vocabulary.hsk3){
-  // Normalize any bad objects: ensure each entry has chinese & meaning
-  vocabulary.hsk3 = vocabulary.hsk3.filter(it => it && it.chinese && it.meaning);
-}
-if(vocabulary.hsk2){
-  vocabulary.hsk2 = vocabulary.hsk2.filter(it => it && it.chinese && it.meaning);
-}
-
-/* Initialize UI */
-document.getElementById('score').textContent = score;
-document.getElementById('timer').textContent = timeLeft;
-document.getElementById('level-badge').textContent = document.querySelector('.level-btn.active').textContent;
-
-</script>
+            hsk1: [
+                { chinese: "你好", meaning: "สวัสดี" },
+                { chinese: "谢谢", meaning: "ขอบคุณ" },
+                { chinese: "再见", meaning: "ลาก่อน" },
+                { chinese: "老师", meaning: "ครู" },
+                { chinese: "学生", meaning: "นักเรียน" }
+            ],
+            hsk2: [
+                { chinese: "电脑", meaning: "คอมพิวเตอร์" },
+                { chinese: "手机", meaning: "โทรศัพท์มือถือ" },
+                { chinese: "学校", meaning: "โรงเรียน" },
+                { chinese: "家庭", meaning: "ครอบครัว" },
+                { chinese: "朋友", meaning: "เพื่อน" }
+            ],
+            hsk3: [
+                { chinese: "图书馆", meaning: "ห้องสมุด" },
+                { chinese: "餐厅", meaning: "ร้านอาหาร" },
+                { chinese: "医院", meaning: "โรงพยาบาล" },
+                { chinese: "机场", meaning: "สนามบิน" },
+                { chinese: "警察", meaning: "ตำรวจ" }
+            ]
+        };
+        
+        let selectedLevel = 'hsk1';
+        let currentGame = null;
+        let score = 0;
+        let fishInterval;
+        let timerInterval;
+        let timeLeft = 60;
+        let gameStarted = false;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let missedCount = 0;
+        
+        // ฟังก์ชันเริ่มเกม
+        function startGame(gameType) {
+            currentGame = gameType;
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('main-header').style.display = 'none';
+            
+            if (gameType === 'fishing') {
+                document.getElementById('fishing-game').style.display = 'block';
+                document.getElementById('game-level-badge').textContent = selectedLevel.toUpperCase();
+                startFishingGame();
+            } else {
+                alert(`เกม ${gameType} กำลังอยู่ในระหว่างพัฒนา!`);
+                backToMenu();
+            }
+        }
+        
+        // เริ่มเกมตกปลา
+        function startFishingGame() {
+            score = 0;
+            timeLeft = 90;
+            gameStarted = false;
+            correctCount = 0;
+            wrongCount = 0;
+            missedCount = 0;
+            updateScore();
+            updateTimer();
+            const gameArea = document.getElementById('fishing-area');
+            gameArea.innerHTML = '';
+            
+            // สร้างคันเบ็ดและเส้นเอ็น
+            const fishingRod = document.createElement('div');
+            fishingRod.className = 'fishing-rod';
+            fishingRod.id = 'fishing-rod';
+            gameArea.appendChild(fishingRod);
+            
+            const fishingLine = document.createElement('div');
+            fishingLine.className = 'fishing-line';
+            fishingLine.id = 'fishing-line';
+            gameArea.appendChild(fishingLine);
+            
+            // ติดตามการเคลื่อนไหวของเมาส์
+            gameArea.addEventListener('mousemove', updateFishingRodPosition);
+            gameArea.addEventListener('mouseleave', () => {
+                const line = document.getElementById('fishing-line');
+                if (line) line.style.height = '0';
+            });
+            
+            document.getElementById('start-game-btn').style.display = 'block';
+            document.getElementById('start-game-btn').disabled = false;
+            document.getElementById('game-over-screen').style.display = 'none';
+            document.getElementById('game-over-overlay').style.display = 'none';
+        }
+        
+        // เริ่มตัวจับเวลาและสร้างปลา
+        function startFishingTimer() {
+            gameStarted = true;
+            document.getElementById('start-game-btn').style.display = 'none';
+            
+            // เริ่มจับเวลา
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            // สร้างปลาทุกๆ 1.5 วินาที
+            fishInterval = setInterval(() => {
+                createFish();
+            }, 1500);
+            
+            // สร้างปลาเริ่มต้น 3 ตัว
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    createFish();
+                }, i * 500);
+            }
+        }
+        
+        // อัพเดทตัวจับเวลา
+        function updateTimer() {
+            document.getElementById('timer').textContent = timeLeft;
+        }
+        
+        // จบเกม
+        function endGame() {
+            clearInterval(fishInterval);
+            clearInterval(timerInterval);
+            gameStarted = false;
+            
+            // ลบปลาทั้งหมด
+            const gameArea = document.getElementById('fishing-area');
+            gameArea.innerHTML = '';
+            
+            // แสดงหน้าจอสรุปคะแนน
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+            document.getElementById('missed-count').textContent = missedCount;
+            document.getElementById('game-over-overlay').style.display = 'block';
+            document.getElementById('game-over-screen').style.display = 'block';
+        }
+        
+        // เริ่มเกมใหม่
+        function restartGame() {
+            startFishingGame();
+        }
+        
+        // สร้างปลาพร้อมคำศัพท์
+        function createFish() {
+            if (!gameStarted) return; // ไม่สร้างปลาถ้ายังไม่เริ่มเกม
+            
+            const gameArea = document.getElementById('fishing-area');
+            const gameAreaRect = gameArea.getBoundingClientRect();
+            
+            // เลือกคำศัพท์สุ่มจากระดับที่เลือก
+            const words = vocabulary[selectedLevel];
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            
+            const fish = document.createElement('div');
+            fish.className = 'fish';
+            fish.innerHTML = '🐟';
+            fish.dataset.chinese = randomWord.chinese;
+            fish.dataset.meaning = randomWord.meaning;
+            fish.dataset.caught = 'false';
+            
+            // ตำแหน่งเริ่มต้นสุ่มที่ด้านล่าง
+            const startX = Math.random() * (gameAreaRect.width - 50);
+            fish.style.left = `${startX}px`;
+            fish.style.bottom = '-50px';
+            
+            // เคลื่อนที่ปลาขึ้นด้านบน
+            fish.style.transition = `bottom ${3 + Math.random() * 2}s linear`;
+            
+            gameArea.appendChild(fish);
+            
+            // เมื่อ animation เสร็จสิ้น
+            setTimeout(() => {
+                fish.style.bottom = `${gameAreaRect.height}px`;
+            }, 10);
+            
+            // เมื่อคลิกปลา
+            fish.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (fish.dataset.caught === 'true') return; // ป้องกันการคลิกซ้ำ
+                
+                const userAnswer = prompt(`คำศัพท์ "${randomWord.chinese}" แปลว่าอะไร?`);
+                
+                if (userAnswer && userAnswer.trim() === randomWord.meaning) {
+                    alert('ถูกต้อง!');
+                    score += 10;
+                    correctCount++;
+                    fish.innerHTML = '🎉';
+                    fish.style.transform = 'scale(1.5)';
+                    fish.dataset.caught = 'true';
+                    setTimeout(() => {
+                        fish.remove();
+                    }, 500);
+                } else if (userAnswer) {
+                    alert(`ผิด! คำที่ถูกต้องคือ "${randomWord.meaning}"`);
+                    score = Math.max(0, score - 5);
+                    wrongCount++;
+                    fish.style.transform = 'scale(0.8)';
+                    fish.dataset.caught = 'true';
+                    setTimeout(() => {
+                        fish.remove();
+                    }, 500);
+                }
+                
+                updateScore();
+            });
+            
+            // ลบปลาออกเมื่อเคลื่อนที่ออกจากจอ
+            setTimeout(() => {
+                if (fish.parentNode && fish.dataset.caught === 'false') {
+                    missedCount++; // นับปลาที่พลาด
+                    fish.remove();
+                }
+            }, 5000);
+        }
+        
+        // อัพเดทตำแหน่งคันเบ็ดและเส้นเอ็น
+        function updateFishingRodPosition(e) {
+            const gameArea = document.getElementById('fishing-area');
+            const rod = document.getElementById('fishing-rod');
+            const line = document.getElementById('fishing-line');
+            
+            if (!rod || !line) return;
+            
+            const rect = gameArea.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // อัพเดทตำแหน่งคันเบ็ด (เฉพาะแกน X)
+            rod.style.left = mouseX + 'px';
+            
+            // อัพเดทเส้นเอ็น (ปรับให้เชื่อมที่ตรงกลางด้านบนของ cursor)
+            line.style.left = (mouseX + 12) + 'px';
+            line.style.height = Math.max(0, mouseY - 55 - 16 + 15) + 'px'; // เพิ่ม 15px เพื่อให้เส้นยาวลงมาอีก
+        }
+        
+        // อัพเดทคะแนน
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+        
+        // กลับสู่เมนูหลัก
+        function backToMenu() {
+            clearInterval(fishInterval);
+            clearInterval(timerInterval);
+            gameStarted = false;
+            document.getElementById('main-menu').style.display = 'block';
+            document.getElementById('main-header').style.display = 'block';
+            document.getElementById('fishing-game').style.display = 'none';
+            document.getElementById('game-over-screen').style.display = 'none';
+            document.getElementById('game-over-overlay').style.display = 'none';
+            currentGame = null;
+        }
+        
+        // เลือกระดับ HSK
+        const levelBtns = document.querySelectorAll('.level-btn');
+        
+        levelBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                levelBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedLevel = btn.dataset.level === 'all' ? 'hsk1' : btn.dataset.level;
+                filterGamesByLevel(btn.dataset.level);
+            });
+        });
+        
+        // กรองเกมตามระดับที่เลือก
+        function filterGamesByLevel(level) {
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            if (level === 'all') {
+                gameCards.forEach(card => card.style.display = 'block');
+                return;
+            }
+            
+            gameCards.forEach(card => {
+                const cardLevels = card.dataset.level.split(' ');
+                if (cardLevels.includes(level)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // เมื่อคลิกนอกปลาในเกมตกปลา
+        document.getElementById('fishing-area').addEventListener('click', () => {
+            if (currentGame === 'fishing') {
+                score = Math.max(0, score - 2);
+                updateScore();
+            }
+        });
+    </script>
 </body>
 </html>
-
